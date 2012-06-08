@@ -14,7 +14,7 @@ This does the following things:
   - Remove any event callbacks bound to `view.collection`
   - `undelegateEvents()`
   - Call a `view.beforeTearDown()` (if such a method exists)
-  - Call tearDown on any subViews (see "Tearing Down SubViews" below for more on adding/removing subviews)
+  - Call tearDown on any subViews (see "[Tearing Down SubViews](#tearing-down-subview-hierarchies)" below for more on adding/removing subviews)
   - Remove `view.$el` from the DOM
 
 ### Cleaning up model and collection bindings
