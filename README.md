@@ -84,3 +84,5 @@ Here's an example:
     console.log(dog);
     
     > ▶ AnimalModel
+
+**Note**: Underscore's `bindAll` method works by iterating over all functions on an object and wrapping them in anonymous closures.  This includes the constructor function which means, unfortunately, that your object will lose its constructorName.  Best to avoid `bindAll` and actually pay attention to where you need to bind methods.  Alternatively... you could monkey patch Underscore...
