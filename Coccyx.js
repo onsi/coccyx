@@ -1,3 +1,9 @@
+//     Coccyx.js 0.1.0
+
+//     (c) 2012 Onsi Fakhouri
+//     Coccyx.js may be freely distributed under the MIT license.
+//     http://github.com/onsi/coccyx
+
 (function() {
   var originalExtend = Backbone.Model.extend;
   

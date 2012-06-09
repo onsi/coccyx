@@ -86,3 +86,14 @@ Here's an example:
     > ▶ AnimalModel
 
 **Note**: Underscore's `bindAll` method works by iterating over all functions on an object and wrapping them in anonymous closures.  This includes the constructor function which means, unfortunately, that your object will lose its constructorName.  Best to avoid `bindAll` and actually pay attention to where you need to bind methods.  Alternatively... you could monkey patch Underscore...
+
+## Dependencies and "Installation"
+
+Coccyx requires:
+
+  - [Backbone](http://backbonejs.org) (duh) (tested with 0.9.2)
+  - [Underscore](http://underscorejs.org) (tested with 1.3.3)
+
+To use Coccyx you must include it *after* including Undersocre and Backbone.  Coccyx monkey-patches backbone's extend to support custom constructor names and appends methods to Backbone.View to support tearing down view hierarchies.
+
+Future changes to backbone could break Coccyx or obviate its need.  If the latter happens - great!  If the former: let me know and I'll try to ensure compatibility going forward.
