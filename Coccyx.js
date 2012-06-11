@@ -32,9 +32,9 @@ _.extend(Backbone.View.prototype, {
   },
   
   tearDown: function() {
-    this._tearDown();
     if (this.__parentView) this.__parentView.unregisterSubView(this);
-    this.remove();
+    this._tearDown();
+    this.$el.remove();
     return this;
   },
   
@@ -43,9 +43,8 @@ _.extend(Backbone.View.prototype, {
     this.undelegateEvents();
     if (this.model) this.model.off(null, null, this);
     if (this.collection) this.collection.off(null, null, this);
-    _(this.subViews).each(function(subView) {
-      subView._tearDown();
-    });
+    this.__parentView = null;
+    _(this.subViews).invoke('_tearDown');
     this.subViews = {};
   }
 });

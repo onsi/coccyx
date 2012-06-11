@@ -159,10 +159,14 @@ describe('Coccyx', function() {
       
         expect(view.subView.modelChanges).toEqual(1);
         expect(view.otherSubView.modelChanges).toEqual(1);
+        
+        expect(_.keys(view.subViews).length).toEqual(0);
+        expect(view.subView.__parentView).toBeFalsy();
+        expect(view.otherSubView.__parentView).toBeFalsy();
       });
       
       describe('when a subview is torn down', function() {
-        it('should remove unregister from its parent', function() {
+        it('should unregister from its parent', function() {
           var subView = view.subView;
           
           expect(view.subViews[subView.cid]).toEqual(subView);
@@ -175,8 +179,9 @@ describe('Coccyx', function() {
     })
 
     describe('when a subview is unregistered', function() {
-      it('should be removed from view.subviews', function() {
+      it('should be removed from view.subviews and have its __parent pointer removed', function() {
         view.unregisterSubView(view.subView);
+        expect(view.subView.__parent).toBeFalsy();
         expect(view.subViews[view.subView.cid]).toBeFalsy();
       });
       
