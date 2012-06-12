@@ -10,44 +10,48 @@ Views are only garbage collected when their reference counts drop to zero.  This
     
 This does the following things:
 
-  - Remove any event callbacks bound to `view.model`
-  - Remove any event callbacks bound to `view.collection`
+  - Remove any event callbacks bound via Backbone's `Event.on` or `Event.bind`
   - `undelegateEvents()`
   - Call `view.beforeTearDown()` (if such a method exists)
   - Call tearDown on any subViews (see "[Tearing Down SubViews](#tearing-down-subview-hierarchies)" below for more on adding/removing subviews)
   - Remove `view.$el` from the DOM
 
-### Cleaning up model and collection bindings
-For `model` and `collection` callbacks to be torn down you must pass the `view` as the context when using Backbone's `on` method:
+### Cleaning up Backbone event bindings
 
-    this.model.on('change', view.callback, view);
+Coccyx automatically cleans up any Backbone event bindings on `tearDown`.  To do this, Coccyx injects code into Backbone's `on` and `bind` methods to allow views to track which event bindings need to be cleaned up.
+
+For this mechanism to work you *must* pass the `view` in as the context when using Backbone's `on` method:
+
+    model.on('change', view.callback, view);
     
 This has the added benefit that you do not need to remember to `_.bind(view.callback, view)`
+
+You can enforce this convention by setting `Coccyx.enforceContextualBinding` to `true`.  Coccyx will then throw an exception if an event binding is attempted (anywhere) without passing in a context.
+
+> **Note**: For performance considerations, calling `off` or `unbind` does **not** untrack the event binding.  To be clear: the unbinding will take place and the associated callback will no longer be called when the event fires, however the internal data structure that Coccyx uses to track which dispatchers need to be unbound during `tearDown` does not change.  This means that a refernce to the dispatcher will exist on the view even after `off` is called.  This, ironically, will result in a memory leak until `tearDown` is called. 
+
+>To completely untrack an event binding you must call `view.unregisterEventDispatcher(object)` with the Backbone object that you called `on` or `bind` on.  `unregisterEventDispatcher` will automatically call `off` for you.
+
+> Note that only view contexts keep track of dispatchers in this way.   You don't have to worry about other contexts (models, collections, whatever) hanging on to references to your event dispatchers.
+
+> For the majority of use cases this proviso is a non-issue -- but [now you know](http://nerduo.com/thebattle/).
 
 ### Cleaning up DOM event bindings
 Coccyx calls Backbone's `view.undelegateEvents` to clear out DOM event bindings.  Therefore, you must bind events using either the `events` hash or the `delegateEvents` method.
 
 ### Cleaning up other bindings
-Your view will often have to hook bindings into `Backbone.event` objects other than `view.model` and `view.collection`.  You may also need to add DOM event bindings that are not appropriate for `delegateEvents`.  In such instances you should add a custom `beforeTearDown` method to your Backbone view.  Coccyx will call this method if it exists.  Here's an example usecase:
+Views will sometimes have clean up work to do that Coccyx does not automatically handle.  A common example involves DOM event bindings that are not appropriate for `delegateEvents`.  In such instances you should add a custom `beforeTearDown` method to your Backbone view and do the cleanup there.  Coccyx will call this method if it exists.  Here's an example usecase:
 
     MyView = Backbone.View.extend({
       initialize: function() {
         this.boundResizeHandler = _.bind(this.resizeHandler, this);
-        $(window).on('resize', this.boundResizeHandler);
-          
-        this.aSpecialModel = new Backbone.model();          
-        this.aSpecialModel.on('change', this.changeHandler, this);
+        $(window).on('resize', this.boundResizeHandler);          
       },
         
       beforeTearDown: function() {
         $(window).off('resize', this.boundResizeHandler);
-        this.aSpecialModel.off(null, null, this);
       },
-        
-      changeHandler: function() {
-        ...
-      },
-      
+
       resizeHandler: function() {
         ...
       }
@@ -67,7 +71,6 @@ If you are removing a `subView` by calling `subView.tearDown()` there is no need
     view.unregisterSubView(subView);
     
 when removing a subview.
-
 
 ## Named Constructors
 Sick and tired of seeing `child` printed out when you console.log a backbone object?  This minor annoyance becomes a serious concern when trying to use Chrome's excellent [heap profiler](https://developers.google.com/chrome-developer-tools/docs/heap-profiling) to find leaks and analyze their retaining tree -- which of those many `child`s is the object you're looking for?

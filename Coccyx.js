@@ -1,8 +1,12 @@
-//     Coccyx.js 0.1.0
+//     Coccyx.js 0.2.0
 
 //     (c) 2012 Onsi Fakhouri
 //     Coccyx.js may be freely distributed under the MIT license.
 //     http://github.com/onsi/coccyx
+
+var Coccyx = {
+  enforceContextualBinding: false
+};
 
 (function() {
   var originalExtend = Backbone.Model.extend;
@@ -16,9 +20,31 @@
   }
   
   Backbone.Model.extend = Backbone.Collection.extend = Backbone.Router.extend = Backbone.View.extend = extend;
+  
+  var originalOn = Backbone.Events.on;
+
+  Backbone.Events.on = function(events, callback, context) {
+    originalOn.apply(this, arguments);
+    if (Coccyx.enforceContextualBinding && !context) throw "Coccyx: Backbone event binding attempted without a context."
+    if (context && context.registerEventDispatcher) context.registerEventDispatcher(this);
+  }
+  
+  Backbone.Model.prototype.on = Backbone.Collection.prototype.on = Backbone.Router.prototype.on = Backbone.View.prototype.on = Backbone.Events.on;
+  Backbone.Model.prototype.bind = Backbone.Collection.prototype.bind = Backbone.Router.prototype.bind = Backbone.View.prototype.bind = Backbone.Events.bind = Backbone.Events.on;
 })();
 
 _.extend(Backbone.View.prototype, {
+  registerEventDispatcher: function(dispatcher) {
+    dispatcher._coccyxId = dispatcher._coccyxId || dispatcher.cid || _.uniqueId('coccyx');
+    this.eventDispatchers = this.eventDispatchers || {};
+    this.eventDispatchers[dispatcher._coccyxId] = dispatcher;
+  },
+  
+  unregisterEventDispatcher: function(dispatcher){
+    dispatcher.off(null, null, this);
+    delete this.eventDispatchers[dispatcher._coccyxId];
+  },
+  
   registerSubView: function(subView) {
     this.subViews = this.subViews || {};
     this.subViews[subView.cid] = subView;
@@ -41,9 +67,9 @@ _.extend(Backbone.View.prototype, {
   _tearDown: function() {
     if (this.beforeTearDown) this.beforeTearDown();
     this.undelegateEvents();
-    if (this.model) this.model.off(null, null, this);
-    if (this.collection) this.collection.off(null, null, this);
     this.__parentView = null;
+    _(this.eventDispatchers).invoke('off', null, null, this);
+    this.eventDispatchers = {};
     _(this.subViews).invoke('_tearDown');
     this.subViews = {};
   }
