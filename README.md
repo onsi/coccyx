@@ -106,6 +106,9 @@ Coccyx requires:
   - [Backbone](http://backbonejs.org) (duh) (tested with 0.9.2)
   - [Underscore](http://underscorejs.org) (tested with 1.3.3)
 
-To use Coccyx you must include it *after* including Undersocre and Backbone.  Coccyx monkey-patches backbone's extend to support custom constructor names and appends methods to Backbone.View to support tearing down view hierarchies.
+To use Coccyx you must include `Coccyx.js` *after* including Undersocre and Backbone.  Coccyx monkey-patches backbone's extend to support custom constructor names and appends methods to Backbone.View to support tearing down view hierarchies.
 
 Future changes to backbone could break Coccyx or obviate its need.  If the latter happens - great!  If the former: let me know and I'll try to ensure compatibility going forward.
+
+## If you like Coccyx...
+...check out [Cocktail](http://github.com/onsi/cocktail).  Cocktail helps you DRY up your backbone code with mixins.
