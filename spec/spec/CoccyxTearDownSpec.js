@@ -160,6 +160,10 @@ describe('Coccyx', function() {
       expect(view.buttonClicks).toEqual(1);
     });
 
+    it('should honor the return value for on', function() {
+      expect(dispatcher.on('bunnies', view.buttonClick, view)).toEqual(dispatcher);
+    });
+
     it('should unregister the event dispatcher when the view is torn down', function() {
       view.tearDown();
       dispatcher.trigger('custom');

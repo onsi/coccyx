@@ -89,7 +89,17 @@ describe('Coccyx', function() {
       it('should do nothing to the original constructor', function() {
         expect(view.constructor.name).toEqual('');
         expect(view.initialized).toBeTruthy();
-      });      
+      });
+
+      describe('and enforceConstructorName is true', function() {
+        it('should raise an error', function() {
+          Coccyx.enforceConstructorName = true;
+          expect(function() {
+            var UnnamedCustomView = Backbone.View.extend({});
+          }).toThrow();
+          Coccyx.enforceConstructorName = false;          
+        });
+      });     
     });
   })
 });

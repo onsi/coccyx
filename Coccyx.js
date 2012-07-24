@@ -6,6 +6,7 @@
 
 var Coccyx = {
   enforceContextualBinding: false,
+  enforceConstructorName: false,
   _globalTearDownCallbacks: [],
   addTearDownCallback: function(callback) {
     Coccyx._globalTearDownCallbacks.push(callback);
@@ -17,6 +18,7 @@ var Coccyx = {
 
   var extend = function(protoProps, classProps) {
     var parent = this;
+    if (Coccyx.enforceConstructorName && !protoProps.constructorName) throw "Coccyx: Attempted to create a new class without passing in a constructor name."
     if (protoProps.constructorName && !protoProps.hasOwnProperty('constructor')) {
       eval("protoProps.constructor = function " + protoProps.constructorName + " () { parent.apply(this, arguments) };");
     }
@@ -28,9 +30,10 @@ var Coccyx = {
   var originalOn = Backbone.Events.on;
 
   Backbone.Events.on = function(events, callback, context) {
-    originalOn.apply(this, arguments);
+    var returnValue = originalOn.apply(this, arguments);
     if (Coccyx.enforceContextualBinding && !context) throw "Coccyx: Backbone event binding attempted without a context."
     if (context && context.registerEventDispatcher) context.registerEventDispatcher(this);
+    return returnValue;
   }
 
   Backbone.Model.prototype.on = Backbone.Collection.prototype.on = Backbone.Router.prototype.on = Backbone.View.prototype.on = Backbone.Events.on;
