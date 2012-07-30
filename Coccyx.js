@@ -5,13 +5,11 @@
 //     http://github.com/onsi/coccyx
 
 (function() {
-
   var Coccyx;
-  // Exported for both CommonJS and the browser
+
   if (typeof exports !== 'undefined') {
     Coccyx = exports;
-  }
-  else {
+  } else {
     Coccyx = this.Coccyx = {};
   }
 
@@ -47,7 +45,6 @@
 
   Backbone.Model.prototype.on = Backbone.Collection.prototype.on = Backbone.Router.prototype.on = Backbone.View.prototype.on = Backbone.Events.on;
   Backbone.Model.prototype.bind = Backbone.Collection.prototype.bind = Backbone.Router.prototype.bind = Backbone.View.prototype.bind = Backbone.Events.bind = Backbone.Events.on;
-
 })();
 
 _.extend(Backbone.View.prototype, {
