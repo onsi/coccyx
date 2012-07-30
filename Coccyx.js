@@ -4,16 +4,25 @@
 //     Coccyx.js may be freely distributed under the MIT license.
 //     http://github.com/onsi/coccyx
 
-var Coccyx = {
-  enforceContextualBinding: false,
-  enforceConstructorName: false,
-  _globalTearDownCallbacks: [],
-  addTearDownCallback: function(callback) {
-    Coccyx._globalTearDownCallbacks.push(callback);
-  }
-};
-
 (function() {
+
+  var Coccyx;
+  // Exported for both CommonJS and the browser
+  if (typeof exports !== 'undefined') {
+    Coccyx = exports;
+  }
+  else {
+    Coccyx = this.Coccyx = {};
+  }
+
+  Coccyx.enforceContextualBinding = false;
+  Coccyx.enforceConstructorName   = false;
+
+  Coccyx._globalTearDownCallbacks = [];
+  Coccyx.addTearDownCallback = function(callback) {
+    Coccyx._globalTearDownCallbacks.push(callback);
+  };
+
   var originalExtend = Backbone.Model.extend;
 
   var extend = function(protoProps, classProps) {
@@ -38,6 +47,7 @@ var Coccyx = {
 
   Backbone.Model.prototype.on = Backbone.Collection.prototype.on = Backbone.Router.prototype.on = Backbone.View.prototype.on = Backbone.Events.on;
   Backbone.Model.prototype.bind = Backbone.Collection.prototype.bind = Backbone.Router.prototype.bind = Backbone.View.prototype.bind = Backbone.Events.bind = Backbone.Events.on;
+
 })();
 
 _.extend(Backbone.View.prototype, {
