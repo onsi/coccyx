@@ -81,6 +81,10 @@ If you are removing a `subView` by calling `subView.tearDown()` there is no need
 
 when removing a subview.
 
+It is often convenient to be able to tear down all of a view's subviews, but leave the view itself alone.  This is commonly done in `render` methods that blow away all the view's content and then regenerate it.  You can tear down all registered subviews by calling:
+
+    view.tearDownRegisteredSubViews();
+
 ## Named Constructors
 Sick and tired of seeing `child` printed out when you console.log a backbone object?  This minor annoyance becomes a serious concern when trying to use Chrome's excellent [heap profiler](https://developers.google.com/chrome-developer-tools/docs/heap-profiling) to find leaks and analyze their retaining tree -- which of those many `child`s is the object you're looking for?
 
@@ -100,6 +104,14 @@ Here's an example:
 You can enforce the use of `constructorName` by setting `Coccyx.enforceConstructorName` to `true`.  Coccyx will then throw an exception if a new class is crated without supplying a `constructorName`.
 
 **Note**: Underscore's `bindAll` method works by iterating over all functions on an object and wrapping them in anonymous closures.  This includes the constructor function which means, unfortunately, that your object will lose its constructorName.  Best to avoid `bindAll` and actually pay attention to where you need to bind methods.  Alternatively... you could monkey patch Underscore...
+
+## Testing Coccyx
+`JasmineCoccyx.js` provides two custom Jasmine matchers to support test-driving code that uses Coccyx.  These are:
+
+- `expect(view).toHaveBeenTornDown()` asserts that a view has been torn down.
+- `expect(view).toHaveRegisteredSubView(subview)` asserts that `subview` is a registered subview of `view`.
+
+Just be sure to include `JasmineCoccyx.js` in your Jasmine suite to install this matchers.
 
 ## Dependencies and "Installation"
 

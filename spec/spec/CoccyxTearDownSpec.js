@@ -92,6 +92,12 @@ describe('Coccyx', function() {
       expect(view.tearDown()).toEqual(view);
     });
 
+    it('should have been torn down', function() {
+      expect(view).not.toHaveBeenTornDown();
+      view.tearDown();
+      expect(view).toHaveBeenTornDown();
+    });
+
     it('should unbind any delegate event listeners', function() {
       expect(view.buttonClicks).toEqual(0);
       $('.button').click();
@@ -147,18 +153,6 @@ describe('Coccyx', function() {
     });
   });
   
-  describe('tearDownRegisteredSubViews', function() {
-  	it('should tear down all registered subviews', function() {
-  	  spyOn(view.subView, 'tearDown');
-  	  spyOn(view.otherSubView, 'tearDown');
-  	  
-  	  view.tearDownRegisteredSubViews();
-  	  
-  	  expect(view.subView.tearDown).toHaveBeenCalled();
-  	  expect(view.otherSubView.tearDown).toHaveBeenCalled();
-  	});
-  });
-
   describe('registering event dispatchers', function() {
     var dispatcher;
     beforeEach(function() {
@@ -209,10 +203,15 @@ describe('Coccyx', function() {
     });
   });
 
-  describe('registering and unregistering subviews', function() {
+  describe('registering, unregistering, and tearing down subviews', function() {
     describe('when a subview is registered', function() {
       it('should be accesible via cid on view.subviews', function() {
         expect(view.subViews[view.subView.cid]).toEqual(view.subView);
+      });
+
+      it('should haveRegisteredSubView', function() {
+        expect(view).toHaveRegisteredSubView(view.subView);
+        expect(view).toHaveRegisteredSubView(view.otherSubView);
       });
 
       it('should be torn down when tearDown is called on the parent view', function() {
@@ -221,6 +220,9 @@ describe('Coccyx', function() {
 
         expect(view.subView.modelChanges).toEqual(1);
         expect(view.otherSubView.modelChanges).toEqual(1);
+
+        expect(view.subView).not.toHaveBeenTornDown();
+        expect(view.otherSubView).not.toHaveBeenTornDown();
 
         view.tearDown();
 
@@ -233,6 +235,9 @@ describe('Coccyx', function() {
         expect(_.keys(view.subViews).length).toEqual(0);
         expect(view.subView.__parentView).toBeFalsy();
         expect(view.otherSubView.__parentView).toBeFalsy();
+        
+        expect(view.subView).toHaveBeenTornDown();
+        expect(view.otherSubView).toHaveBeenTornDown();
       });
 
       describe('when a subview is torn down', function() {
@@ -246,6 +251,18 @@ describe('Coccyx', function() {
           expect(subView.__parentView).toBeFalsy();
         });
       });
+
+      describe('tearDownRegisteredSubViews', function() {
+        it('should tear down all registered subviews', function() {
+          expect(view.subView).not.toHaveBeenTornDown();
+          expect(view.otherSubView).not.toHaveBeenTornDown();
+  
+          view.tearDownRegisteredSubViews();
+  
+          expect(view.subView).toHaveBeenTornDown();
+          expect(view.otherSubView).toHaveBeenTornDown();
+        });
+      });
     })
 
     describe('when a subview is unregistered', function() {
@@ -256,17 +273,11 @@ describe('Coccyx', function() {
       });
 
       it('should not be torn down when tearDown is called on the parent view', function() {
-        view.subView.model.set('bump', 1);
-        view.otherSubView.model.set('bump', 1);
-
         view.unregisterSubView(view.otherSubView);
         view.tearDown();
 
-        view.subView.model.set('bump', 2);
-        view.otherSubView.model.set('bump', 2);
-
-        expect(view.subView.modelChanges).toEqual(1);
-        expect(view.otherSubView.modelChanges).toEqual(2);
+        expect(view.subView).toHaveBeenTornDown();
+        expect(view.otherSubView).not.toHaveBeenTornDown();
       });
     });
   });

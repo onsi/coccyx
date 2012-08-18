@@ -79,9 +79,7 @@ _.extend(Backbone.View.prototype, {
   },
   
   tearDownRegisteredSubViews: function() {
-  	_(this.subViews).each(function(subView) {
-  	  subView.tearDown();
-  	});
+  	_.chain(this.subViews).values().invoke('tearDown');
   },
   
   _tearDown: function() {
