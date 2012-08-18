@@ -146,6 +146,18 @@ describe('Coccyx', function() {
       Coccyx._globalTearDownCallbacks = []; //clean up after ourselves
     });
   });
+  
+  describe('tearDownRegisteredSubViews', function() {
+  	it('should tear down all registered subviews', function() {
+  	  spyOn(view.subView, 'tearDown');
+  	  spyOn(view.otherSubView, 'tearDown');
+  	  
+  	  view.tearDownRegisteredSubViews();
+  	  
+  	  expect(view.subView.tearDown).toHaveBeenCalled();
+  	  expect(view.otherSubView.tearDown).toHaveBeenCalled();
+  	});
+  });
 
   describe('registering event dispatchers', function() {
     var dispatcher;
@@ -255,7 +267,14 @@ describe('Coccyx', function() {
 
         expect(view.subView.modelChanges).toEqual(1);
         expect(view.otherSubView.modelChanges).toEqual(2);
-      })
-    })
-  })
+      });
+    });
+    
+    describe('unregisterAllSubViews', function() {
+      it('should unregister all (registered) subviews', function() {
+        view.unregisterAllSubViews();
+        expect(view.subViews).toEqual({});
+      });
+    });
+  });
 });
