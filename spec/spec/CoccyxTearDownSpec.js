@@ -269,12 +269,5 @@ describe('Coccyx', function() {
         expect(view.otherSubView.modelChanges).toEqual(2);
       });
     });
-    
-    describe('unregisterAllSubViews', function() {
-      it('should unregister all (registered) subviews', function() {
-        view.unregisterAllSubViews();
-        expect(view.subViews).toEqual({});
-      });
-    });
   });
 });

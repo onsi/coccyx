@@ -71,10 +71,6 @@ _.extend(Backbone.View.prototype, {
     delete this.subViews[subView.cid];
   },
 
-  unregisterAllSubViews: function() {
-  	_(this.subViews).each(this.unregisterSubView, this);
-  },
-
   tearDown: function() {
     if (this.__parentView) this.__parentView.unregisterSubView(this);
     this._tearDown();
