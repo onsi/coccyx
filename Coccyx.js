@@ -77,7 +77,13 @@ _.extend(Backbone.View.prototype, {
     this.$el.remove();
     return this;
   },
-
+  
+  tearDownRegisteredSubViews: function() {
+  	_(this.subViews).each(function(subView) {
+  	  subView.tearDown();
+  	});
+  },
+  
   _tearDown: function() {
     var that = this;
     if (this.beforeTearDown) this.beforeTearDown();
