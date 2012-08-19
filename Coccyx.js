@@ -96,5 +96,11 @@ _.extend(Backbone.View.prototype, {
     this.eventDispatchers = {};
     _(this.subViews).invoke('_tearDown');
     this.subViews = {};
+  },
+  
+  descendsFrom: function(ancestorName) {
+    var parentView = this.__parentView;
+  	if (!parentView) {return false;}
+  	return parentView.constructorName == ancestorName ? true : parentView.descendsFrom(ancestorName);
   }
 });

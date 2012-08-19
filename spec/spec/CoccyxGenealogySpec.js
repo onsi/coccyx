@@ -2,7 +2,7 @@ var GrandmotherView = Backbone.View.extend({
   constructorName: 'GrandmotherView'
 });
 
-var MotherView = Backbone.View.extend();
+var MotherView = Backbone.View.extend({});
 
 var SonView = Backbone.View.extend({
   constructorName: 'SonView'
@@ -12,7 +12,7 @@ var DaughterView = Backbone.View.extend({
   constructorName: 'DaughterView'
 });
 
-var GranddaughterView = Backbone.View.extend();
+var GranddaughterView = Backbone.View.extend({});
 
 describe('Coccyx', function() {
   var grandmotherView, motherView, sonView, daughterView, granddaughterView;
@@ -20,8 +20,8 @@ describe('Coccyx', function() {
   beforeEach(function() {
     grandmotherView = new GrandmotherView();
     motherView = new MotherView();
-    sonView = new sonView();
-    daughterView = new daughterView();
+    sonView = new SonView();
+    daughterView = new DaughterView();
     granddaughterView = new GranddaughterView();
     
     grandmotherView.registerSubView(motherView);
@@ -30,17 +30,17 @@ describe('Coccyx', function() {
     daughterView.registerSubView(granddaughterView);
   });
 
-  describe('descendsFrom?', function() {
+  describe('descendsFrom', function() {
     it('should return true if it descends from a view with the given constructorName', function() {
-		expect(granddaughterView.descendsFrom?('DaughterView')).toBeTruthy();
+		expect(granddaughterView.descendsFrom('DaughterView')).toBeTruthy();
     });
     
     it('and it should not matter if intermediate ancestors have no constructorName', function() {
-		expect(granddaughterView.descendsFrom?('GrandmotherView')).toBeTruthy();    
+		expect(granddaughterView.descendsFrom('GrandmotherView')).toBeTruthy();    
     });
     
     it('should return false if it does not descend from a view with the given constructorName', function() {
-		expect(granddaughterView.descendsFrom?('SonView')).toBeFalsy();        
+		expect(granddaughterView.descendsFrom('SonView')).toBeFalsy();        
     });
   });
 });
