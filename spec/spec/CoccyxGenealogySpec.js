@@ -30,17 +30,40 @@ describe('Coccyx', function() {
     daughterView.registerSubView(granddaughterView);
   });
 
-  describe('descendsFrom', function() {
-    it('should return true if it descends from a view with the given constructorName', function() {
-		expect(granddaughterView.descendsFrom('DaughterView')).toBeTruthy();
+  describe('hasAncestorNamed', function() {
+    it('should return true if it has an ancestor with the given constructorName', function() {
+		expect(granddaughterView.hasAncestorNamed('DaughterView')).toBeTruthy();
     });
     
-    it('and it should not matter if intermediate ancestors have no constructorName', function() {
-		expect(granddaughterView.descendsFrom('GrandmotherView')).toBeTruthy();    
+    it('should not matter if intermediate ancestors have no constructorName', function() {
+		expect(granddaughterView.hasAncestorNamed('GrandmotherView')).toBeTruthy();    
     });
     
-    it('should return false if it does not descend from a view with the given constructorName', function() {
-		expect(granddaughterView.descendsFrom('SonView')).toBeFalsy();        
+    it('should return false if it has no ancestor with the given constructorName', function() {
+		expect(granddaughterView.hasAncestorNamed('SonView')).toBeFalsy();        
+    });
+  });
+  
+  describe('hasAncestor', function() {
+    var otherDaughterView;
+  
+    beforeEach(function() {
+      otherDaughterView = new DaughterView();
+      motherView.registerSubView(otherDaughterView);
+    });
+  
+    it('should return true if the given view is an ancestor', function() {
+      expect(granddaughterView.hasAncestor(daughterView)).toBeTruthy();
+      expect(granddaughterView.hasAncestor(motherView)).toBeTruthy();
+      expect(granddaughterView.hasAncestor(grandmotherView)).toBeTruthy();
+    });
+    
+    it('should return false if the given view is not an ancestor', function() {
+      expect(granddaughterView.hasAncestor(sonView)).toBeFalsy();
+    });
+    
+    it('should not matter if the given view has the same constructorName as an ancestor', function() {
+      expect(granddaughterView.hasAncestor(otherDaughterView)).toBeFalsy();
     });
   });
 });

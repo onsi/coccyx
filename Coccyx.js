@@ -98,9 +98,15 @@ _.extend(Backbone.View.prototype, {
     this.subViews = {};
   },
   
-  descendsFrom: function(ancestorName) {
+  hasAncestorNamed: function(ancestorName) {
     var parentView = this.__parentView;
   	if (!parentView) {return false;}
-  	return parentView.constructorName == ancestorName ? true : parentView.descendsFrom(ancestorName);
+  	return parentView.constructorName == ancestorName ? true : parentView.hasAncestorNamed(ancestorName);
+  },
+  
+  hasAncestor: function(ancestor) {
+    var parentView = this.__parentView;
+    if (!parentView) {return false;}
+    return parentView == ancestor ? true : parentView.hasAncestor(ancestor);
   }
 });
