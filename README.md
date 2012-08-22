@@ -18,6 +18,8 @@ This does the following things:
 
 ### Cleaning up Backbone event bindings
 
+#### Cleaning up Backbone event bindings **only** works on Backbone version > 0.9.2.  If you have an earlier version of Backbone you **must** upgrade for Coccyx to work correctly.
+
 Coccyx automatically cleans up any Backbone event bindings on `tearDown`.  To do this, Coccyx injects code into Backbone's `on` and `bind` methods to allow views to track which event bindings need to be cleaned up.
 
 For this mechanism to work you *must* pass the `view` in as the context when using Backbone's `on` method:
@@ -117,7 +119,7 @@ Just be sure to include `JasmineCoccyx.js` in your Jasmine suite to install this
 
 Coccyx requires:
 
-  - [Backbone](http://backbonejs.org) (duh) (tested with 0.9.2)
+  - [Backbone](http://backbonejs.org) (duh) (tested with 0.9.2, requires at least version 0.9.2 -- Coccyx does not work with older versions of Backbone)
   - [Underscore](http://underscorejs.org) (tested with 1.3.3)
 
 To use Coccyx you must include `Coccyx.js` *after* including Undersocre and Backbone.  Coccyx monkey-patches backbone's extend to support custom constructor names and appends methods to Backbone.View to support tearing down view hierarchies.
