@@ -1,6 +1,6 @@
 (function() {
-  var old_tearDown = Backbone.View.prototype._tearDown;
-  Backbone.View.prototype._tearDown = function() {
+  var old_tearDown = Coccyx.View.prototype._tearDown;
+  Coccyx.View.prototype._tearDown = function() {
     this.__tornDown = true;
     return old_tearDown.apply(this, arguments);
   }
