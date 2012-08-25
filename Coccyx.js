@@ -10,17 +10,20 @@
   if (typeof exports !== 'undefined') {
     Coccyx = exports;
   } else {
-    Coccyx = this.Coccyx = {};
+    this.Coccyx = this.Coccyx || {};
+    Coccyx = this.Coccyx;
   }
 
   Coccyx.enforceContextualBinding = false;
   Coccyx.enforceConstructorName   = false;
+  Coccyx.unobtrusive              = Coccyx.unobtrusive || false;
 
   Coccyx._globalTearDownCallbacks = [];
   Coccyx.addTearDownCallback = function(callback) {
     Coccyx._globalTearDownCallbacks.push(callback);
   };
 
+  var originalExtend = Backbone.Model.extend;
   var extendWithConstructorName = function(protoProps, classProps) {
     var parent = this;
     if (Coccyx.enforceConstructorName && !protoProps.constructorName) throw "Coccyx: Attempted to create a new class without passing in a constructor name."
@@ -28,14 +31,10 @@
       eval("protoProps.constructor = function " + protoProps.constructorName + " () { parent.apply(this, arguments) };");
     }
 
-    return Backbone.Model.extend.call(parent, protoProps, classProps);
+    return originalExtend.call(parent, protoProps, classProps);
   };
 
-  Coccyx.Model = Backbone.Model.extend({});
-  Coccyx.Collection = Backbone.Collection.extend({});
-  Coccyx.Router = Backbone.Router.extend({});
-
-  Coccyx.View = Backbone.View.extend({
+  var eventManager = {
     registerEventDispatcher: function(dispatcher) {
       dispatcher._coccyxId = dispatcher._coccyxId || dispatcher.cid || _.uniqueId('coccyx');
       this.eventDispatchers = this.eventDispatchers || {};
@@ -83,10 +82,11 @@
       _(this.subViews).invoke('_tearDown');
       this.subViews = {};
     }
-  });
+  };
 
+  var originalOn = Backbone.Events.on;
   var onWithContext = function (events, callback, context) {
-    var returnValue = Backbone.Events.on.apply(this, arguments);
+    var returnValue = originalOn.apply(this, arguments);
     if (Coccyx.enforceContextualBinding && !context) throw "Coccyx: Event binding attempted without a context."
     if (context && context.registerEventDispatcher) context.registerEventDispatcher(this);
     return returnValue;
@@ -97,8 +97,22 @@
     bind: onWithContext
   });
 
+  if (Coccyx.unobtrusive) {
+    Coccyx.Model = Backbone.Model.extend({});
+    Coccyx.Collection = Backbone.Collection.extend({});
+    Coccyx.Router = Backbone.Router.extend({});
+    Coccyx.View = Backbone.View.extend({});
+  } else {
+    Coccyx.Model = Backbone.Model;
+    Coccyx.Collection = Backbone.Collection;
+    Coccyx.Router = Backbone.Router;
+    Coccyx.View = Backbone.View;
+  }
+
   _.each([Coccyx.Model, Coccyx.Collection, Coccyx.Router, Coccyx.View ], function(klass) {
     klass.extend = extendWithConstructorName;
     _.extend(klass.prototype, Coccyx.Events);
   });
+
+  _.extend(Coccyx.View.prototype, eventManager);
 })();
