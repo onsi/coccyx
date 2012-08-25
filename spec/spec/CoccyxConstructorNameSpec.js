@@ -1,4 +1,4 @@
-var NamedCustomView = Backbone.View.extend({
+var NamedCustomView = Coccyx.View.extend({
   constructorName:'CustomView',
           
   initialize: function() {
@@ -6,7 +6,7 @@ var NamedCustomView = Backbone.View.extend({
   }
 });
         
-var UnnamedCustomView = Backbone.View.extend({
+var UnnamedCustomView = Coccyx.View.extend({
   initialize: function() {
     this.initialized = true;
   }
@@ -29,18 +29,18 @@ describe('Coccyx', function() {
       });
       
       it('should work for models, collections, and routers too', function() {
-        var model = new (Backbone.Model.extend({constructorName:'MyModel'}))();
+        var model = new (Coccyx.Model.extend({constructorName:'MyModel'}))();
         expect(model.constructor.name).toEqual('MyModel');
         
-        var collection = new (Backbone.Collection.extend({constructorName:'MyCollection'}))();
+        var collection = new (Coccyx.Collection.extend({constructorName:'MyCollection'}))();
         expect(collection.constructor.name).toEqual('MyCollection');
 
-        var router = new (Backbone.Router.extend({constructorName:'MyRouter'}))();
+        var router = new (Coccyx.Router.extend({constructorName:'MyRouter'}))();
         expect(router.constructor.name).toEqual('MyRouter');
       });
       
       it('should not overwrite a passed in constructor', function() {
-        var Grumpy = Backbone.Model.extend({
+        var Grumpy = Coccyx.Model.extend({
           constructorName: 'DoItTheirWay',
           constructor:function DoItMyWay() {
             this.myWay = true;
@@ -54,7 +54,7 @@ describe('Coccyx', function() {
       });
       
       it('should not interfere with subclassing', function() {
-        var Dog = Backbone.Model.extend({
+        var Dog = Coccyx.Model.extend({
           constructorName:'Dog',
           initialize: function() {
             this.species = 'dog'
@@ -95,7 +95,7 @@ describe('Coccyx', function() {
         it('should raise an error', function() {
           Coccyx.enforceConstructorName = true;
           expect(function() {
-            var UnnamedCustomView = Backbone.View.extend({});
+            var UnnamedCustomView = Coccyx.View.extend({});
           }).toThrow();
           Coccyx.enforceConstructorName = false;          
         });

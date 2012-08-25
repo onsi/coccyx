@@ -1,4 +1,4 @@
-var CustomView = Backbone.View.extend({
+var CustomView = Coccyx.View.extend({
   className: 'custom-div',
 
   initialize: function() {
@@ -11,7 +11,7 @@ var CustomView = Backbone.View.extend({
     this.model.on('change', this.modelChange, this);
     this.collection.on('add', this.collectionAdd, this);
 
-    this.otherModel = new Backbone.Model();
+    this.otherModel = new Coccyx.Model();
     this.otherModel.on('change', this.otherModelChange, this);
 
     this.boundKeyUpHandler = _.bind(this.keyUpHandler, this);
@@ -59,12 +59,12 @@ var CustomView = Backbone.View.extend({
   }
 });
 
-var CustomSubView = Backbone.View.extend({
+var CustomSubView = Coccyx.View.extend({
   className: 'sub-view',
 
   initialize: function() {
     this.modelChanges = 0;
-    this.model = new Backbone.Model();
+    this.model = new Coccyx.Model();
     this.model.on('change', this.modelChange, this);
   },
 
@@ -77,8 +77,8 @@ describe('Coccyx', function() {
   var model, collection, view;
 
   beforeEach(function() {
-    model = new Backbone.Model();
-    collection = new Backbone.Collection([]);
+    model = new Coccyx.Model();
+    collection = new Coccyx.Collection([]);
     view = new CustomView({
       model: model,
       collection: collection
@@ -110,7 +110,7 @@ describe('Coccyx', function() {
       expect(view.buttonClicks).toEqual(1);
     });
 
-    it('should unbind any bindings to any Backbone objects', function() {
+    it('should unbind any bindings to any Coccyx objects', function() {
       model.set('bump', 1);
       view.otherModel.set('bump', 1);
       collection.add({'foo': 1});
@@ -156,7 +156,7 @@ describe('Coccyx', function() {
   describe('registering event dispatchers', function() {
     var dispatcher;
     beforeEach(function() {
-      dispatcher = _.clone(Backbone.Events);
+      dispatcher = _.clone(Coccyx.Events);
       dispatcher.on('custom', view.buttonClick, view);
     });
 
