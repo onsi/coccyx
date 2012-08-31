@@ -94,5 +94,17 @@ _.extend(Backbone.View.prototype, {
     this.eventDispatchers = {};
     _(this.subViews).invoke('_tearDown');
     this.subViews = {};
+  },
+  
+  hasAncestorNamed: function(ancestorName) {
+    var parentView = this.__parentView;
+  	if (!parentView) {return false;}
+  	return parentView.constructorName == ancestorName ? true : parentView.hasAncestorNamed(ancestorName);
+  },
+  
+  hasAncestor: function(ancestor) {
+    var parentView = this.__parentView;
+    if (!parentView) {return false;}
+    return parentView == ancestor ? true : parentView.hasAncestor(ancestor);
   }
 });
