@@ -1,4 +1,4 @@
-//     Coccyx.js 0.4.0
+//     UnobtrusiveCoccyx.js 0.4.0
 
 //     (c) 2012 Onsi Fakhouri
 //     Coccyx.js may be freely distributed under the MIT license.
@@ -101,5 +101,10 @@
     _.extend(root.View.prototype, coccyxViewExtensions);
   }
   
-  coccyxify(Backbone);
+  Coccyx.Events = _.extend({}, Backbone.Events);
+  _.each(klassNames, function(klassName) {
+    Coccyx[klassName] = Backbone[klassName].extend({});
+  });
+
+  coccyxify(Coccyx);
 })();
