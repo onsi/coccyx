@@ -1,6 +1,3 @@
-coccyxTearDownSpecs(Coccyx);
-coccyxConstructorNameSpecs(Coccyx);
-
 describe('Unobtrusive Coccyx does not monkey-patch Backbone', function() {
   describe("Backbone Views", function() {
     it("should not manage view hierarchies", function() {

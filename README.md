@@ -142,7 +142,7 @@ Finally, in unobtrusive Coccyx, only objects that inherit from Coccyx support th
 Coccyx requires:
 
   - [Backbone](http://backbonejs.org) (duh) (tested with 0.9.2, requires at least version 0.9.2 -- Coccyx does not work with older versions of Backbone)
-  - [Underscore](http://underscorejs.org) (tested with 1.3.3)
+  - [Underscore](http://underscorejs.org) (tested with 1.3.3.  Note: 1.4.0 and 1.4.1 include a regression that causes Coccyx to crash when tearing down views with no subviews.  Please upgrade to 1.4.2.)
 
 To use Coccyx you must include `Coccyx.js` or `UnobtrusiveCoccyx.js` *after* including Undersocre and Backbone.  
 

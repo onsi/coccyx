@@ -1,4 +1,4 @@
-//     Coccyx.js 0.4.0
+//     Coccyx.js 0.4.1
 
 //     (c) 2012 Onsi Fakhouri
 //     Coccyx.js may be freely distributed under the MIT license.

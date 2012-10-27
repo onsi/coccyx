@@ -1,2 +1,0 @@
-coccyxTearDownSpecs(Backbone);
-coccyxConstructorNameSpecs(Backbone);

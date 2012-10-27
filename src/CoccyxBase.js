@@ -57,7 +57,6 @@
     },
 
     tearDown: function() {
-      if (this.__parentView) this.__parentView.unregisterSubView(this);
       this._tearDown();
       this.$el.remove();
       return this;
@@ -70,13 +69,16 @@
     _tearDown: function() {
       var that = this;
       if (this.beforeTearDown) this.beforeTearDown();
+      if (this.__parentView) this.__parentView.unregisterSubView(this);
       _(Coccyx._globalTearDownCallbacks).each(function(callback) {
         callback.apply(that);
       });
       this.undelegateEvents();
       this.__parentView = null;
+
       _(this.eventDispatchers).invoke('off', null, null, this);
       this.eventDispatchers = {};
+      
       _(this.subViews).invoke('_tearDown');
       this.subViews = {};
     }
